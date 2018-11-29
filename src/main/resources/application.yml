@@ -1,0 +1,140 @@
+# 此系统为分发系统
+
+#当前系统信息 
+server:
+  ip: localhost
+  port: 8086
+  # 1:监控系统id, 2:web端系统id, 3:iots端系统id, 4:代理系统id, 5:控制系统id, 6：分发系统id
+  thisServerId: 6
+  
+#spring
+spring:
+  profiles:
+    active: dev
+
+#redis
+redis:
+  ips: 
+    dataPlusIp: localhost
+    localIp: localhost
+  ports: 
+    dataPlusPort: 6378
+    localPort: 6379
+  keys:
+    # 大数据的key
+    disDataPlusKey: dis_data_plus
+    # 本地的失败数据
+    localBadDataKey: local_bad_data
+  # 重连时间
+  reconnectTime: 10000
+
+#log日志上传 到的redis服务
+redis-two:
+  host: 10.10.20.171
+  port: 6379
+  password: 123456
+  timeout: 1000
+  database: 0
+
+
+#config系统配置
+sysconfig:
+  #Timer定时器
+  monitorTimer:
+    delayTime: 1000
+    intervalTime: 60000
+  #web端系统信息，socket分发系统使用配置
+  webServer:
+    socketIp: 192.168.43.18
+    socketPort: 8083
+    
+##kafka
+#kafka:
+#  #消费者
+#  consume:
+#    topic: distribution_info_topic
+#    bootstrap.servers: 10.10.20.171:9092
+#    group.id: distribution_info
+#    enable.auto.commit: true
+#    auto.offset.reset: latest
+#    session.timeout.ms: 30000
+#    auto.commit.interval.ms: 1000
+#    key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#  #生产者
+#  produce:
+#    bootstrap:
+#      servers: 10.10.20.171:9092
+#    acks: all
+#    retries: 0
+#    batch.size: 16384
+#    linger.ms: 1
+#    buffer.memory: 33554432
+#    key.serializer: org.apache.kafka.common.serialization.StringSerializer
+#    value.serializer: org.apache.kafka.common.serialization.StringSerializer
+  #分发系统信息
+  disServerConfig:
+    group.id: dis_web_data_info
+  #心跳 topic和key  topic多系统一致，key区分系统，和server.thisServerId一致
+  hearbeat:
+    topic: hearbeat_date
+    key: 6
+
+#l时间调度
+schedules:
+  upload: 0/30 * * * * ?  #上传日志时间
+  delete:  0 0 0 30 * ?  #删除日志时间
+
+#log日志存放地儿
+logging:
+  path: D:\\log\\IOTS\\IOTs_GateWay
+  config: classpath:logback-spring.xml
+
+#模块的名称
+module:
+  name: IOTS_DistributionServer
+
+# 持久化配置文件
+config_info:
+  path: /config
+  file-name: distributeConfig.txt
+
+
+## kafka
+kafka-config:
+  # 消费端
+  consumer:
+    zookeeper:
+      connect: localhost:2181
+    servers: localhost:9092
+    enable:
+      auto:
+        commit: true
+    session:
+      timeout: 60000
+    auto:
+      commit:
+        interval: 100
+      offset:
+        reset: latest
+    topic: test
+    group:
+      id: test
+    concurrency: 10
+  # 生产端
+  producer:
+    servers: localhost:9092
+    retries: 0
+    batch:
+      size: 4096
+    linger: 1
+    buffer:
+      memory: 40960
+
+# mqtt
+mqtt_host: tcp://10.10.170.128:61613
+mqtt_username: admin
+mqtt_password: password
+mqtt_clientid: clientid
+mqtt_timeout: 10
+mqtt_keepalive: 20
